@@ -1,0 +1,71 @@
+openapi: 3.1.0
+info:
+  title: Architectural Document Reviewer Backend
+  version: 1.0.0
+servers:
+  - url: https://YOUR-BACKEND-DOMAIN.com
+paths:
+  /create-review-pdf:
+    post:
+      operationId: create_review_pdf
+      summary: Create an annotated revised PDF with missed architectural review items boxed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - revised_pdf_url
+                - findings
+              properties:
+                review_pdf_url:
+                  type: string
+                  description: URL for the marked-up review PDF.
+                revised_pdf_url:
+                  type: string
+                  description: URL for the revised PDF to annotate.
+                project_name:
+                  type: string
+                  default: Architectural_Document_Review
+                findings:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - page_index
+                      - status
+                      - label
+                      - note
+                    properties:
+                      sheet_number:
+                        type: string
+                      page_index:
+                        type: integer
+                        description: Zero-based revised PDF page index.
+                      status:
+                        type: string
+                        enum: [MISSED, PARTIAL, VERIFY]
+                      label:
+                        type: string
+                      note:
+                        type: string
+                      bbox:
+                        type: array
+                        minItems: 4
+                        maxItems: 4
+                        items:
+                          type: number
+                        description: Rectangle [x0,y0,x1,y1] in PDF points.
+      responses:
+        '200':
+          description: Annotated PDF created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  annotated_pdf_url:
+                    type: string
+                  summary:
+                    type: string
