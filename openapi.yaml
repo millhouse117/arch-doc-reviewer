@@ -3,7 +3,7 @@ info:
   title: Architectural Document Reviewer Backend
   version: 1.0.0
 servers:
-  - url: https://YOUR-BACKEND-DOMAIN.com
+  - url: https://arch-doc-reviewer.onrender.com
 paths:
   /create-review-pdf:
     post:
