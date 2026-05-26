@@ -2,8 +2,10 @@ openapi: 3.1.0
 info:
   title: Architectural Document Reviewer Backend
   version: 1.0.0
+
 servers:
   - url: https://arch-doc-reviewer.onrender.com
+
 paths:
   /create-review-pdf:
     post:
@@ -12,60 +14,32 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               required:
-                - revised_pdf_url
-                - findings
+                - revised_pdf
+                - findings_json
               properties:
-                review_pdf_url:
+                review_pdf:
                   type: string
-                  description: URL for the marked-up review PDF.
-                revised_pdf_url:
+                  format: binary
+                  description: Marked-up review PDF.
+                revised_pdf:
                   type: string
-                  description: URL for the revised PDF to annotate.
+                  format: binary
+                  description: Revised PDF to annotate.
                 project_name:
                   type: string
                   default: Architectural_Document_Review
-                findings:
-                  type: array
-                  items:
-                    type: object
-                    required:
-                      - page_index
-                      - status
-                      - label
-                      - note
-                    properties:
-                      sheet_number:
-                        type: string
-                      page_index:
-                        type: integer
-                        description: Zero-based revised PDF page index.
-                      status:
-                        type: string
-                        enum: [MISSED, PARTIAL, VERIFY]
-                      label:
-                        type: string
-                      note:
-                        type: string
-                      bbox:
-                        type: array
-                        minItems: 4
-                        maxItems: 4
-                        items:
-                          type: number
-                        description: Rectangle [x0,y0,x1,y1] in PDF points.
+                findings_json:
+                  type: string
+                  description: JSON string array of findings with page_index, status, label, note, and optional bbox.
       responses:
-        '200':
+        "200":
           description: Annotated PDF created.
           content:
-            application/json:
+            application/pdf:
               schema:
-                type: object
-                properties:
-                  annotated_pdf_url:
-                    type: string
-                  summary:
-                    type: string
+                type: string
+                format: binary
