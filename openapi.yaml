@@ -14,32 +14,58 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               required:
-                - revised_pdf
-                - findings_json
+                - revised_pdf_url
+                - findings
               properties:
-                review_pdf:
+                review_pdf_url:
                   type: string
-                  format: binary
-                  description: Marked-up review PDF.
-                revised_pdf:
+                revised_pdf_url:
                   type: string
-                  format: binary
-                  description: Revised PDF to annotate.
                 project_name:
                   type: string
                   default: Architectural_Document_Review
-                findings_json:
-                  type: string
-                  description: JSON string array of findings with page_index, status, label, note, and optional bbox.
+                findings:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                      - page_index
+                      - status
+                      - label
+                      - note
+                      - bbox
+                    properties:
+                      sheet_number:
+                        type: string
+                      page_index:
+                        type: integer
+                      status:
+                        type: string
+                        enum: [MISSED, PARTIAL, VERIFY]
+                      label:
+                        type: string
+                      note:
+                        type: string
+                      bbox:
+                        type: array
+                        minItems: 4
+                        maxItems: 4
+                        items:
+                          type: number
       responses:
         "200":
           description: Annotated PDF created.
           content:
-            application/pdf:
+            application/json:
               schema:
-                type: string
-                format: binary
+                type: object
+                properties:
+                  annotated_pdf_url:
+                    type: string
+                  summary:
+                    type: string
